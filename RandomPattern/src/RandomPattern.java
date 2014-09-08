@@ -2,155 +2,132 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * Created by gmtuk on 23/08/2014.
- */
-public final class RandomPattern {
+public abstract class RandomPattern {
 
-    private static final int TRAP_CHANCE = 10;
+    private static final int REPEATING_CHANCE        = 70,
+                             OPTIONAL_NODE_CHANCE    = 10,
 
-    private static final int MIN_NOT_SET = 1;
-    private static final int MAX_NOT_SET = 4;
+                             MIN_NOT_SET             = 1,
+                             MAX_NOT_SET             = 4,
 
-    private static final int MIN_CHAR_RANGE = 1;
-    private static final int MAX_CHAR_RANGE = 10;
+                             MIN_NEIGHBOUR_RANGE     = 1,
+                             MAX_NEIGHBOUR_RANGE     = 10;
 
-    private static final List<NodePattern> patternOptions = new ArrayList<NodePattern>();
+    /*
+        For next version:
+
+        - introduce brackets ()
+        - OR and AND: pattern1 | pattern2, pattern1 && pattern 2
+        - randomize bounded quantifiers
+     */
+
+    interface PatternPrototype {
+        public String pattern(char c);
+    }
+
+    private static final List<PatternPrototype> patternOptions = new ArrayList<>();
     static{
-        Utils.addItemsToList(
+        Utilities.addItemsToCollection(
                 patternOptions,
 
-                new NodePattern() {
-                    @Override
-                    public String pattern(char c) {
-                        return "[" + Utils.escape(Utils.neighbour(c, Utils.randomInRange(-MAX_CHAR_RANGE, -MIN_CHAR_RANGE))) + "-" + Utils.escape(Utils.neighbour(c, Utils.randomInRange(MIN_CHAR_RANGE, MAX_CHAR_RANGE))) + "]";
-                    }
+                (PatternPrototype)(c) -> {  return PatternUtils.escape(c);                       },
+                (PatternPrototype)(c) -> {  return Pattern.matches("\\W", ""+c) ? "\\W" : "\\w"; },
+                (PatternPrototype)(c) -> {  return Pattern.matches("\\D", ""+c) ? "\\D" : "\\d"; },
+                (PatternPrototype)(c) -> {  return Pattern.matches("\\S", ""+c) ? "\\S" : "\\s"; },
+                (PatternPrototype)(c) -> {
+                    return "[" + PatternUtils.escape(CharUtils.randomNeighbour(c, -MAX_NEIGHBOUR_RANGE, -MIN_NEIGHBOUR_RANGE))
+                            + "-" + PatternUtils.escape(CharUtils.randomNeighbour(c, MIN_NEIGHBOUR_RANGE, MAX_NEIGHBOUR_RANGE)) + "]";
                 },
-
-                new NodePattern() {
-                    @Override
-                    public String pattern(char c) {
-                        if(Pattern.matches("\\W", ""+c)) return "\\W";
-                        else                             return "\\w";
-                    }
-                },
-
-                new NodePattern() {
-                    @Override
-                    public String pattern(char c) {
-                        if(Pattern.matches("\\D", ""+c)) return "\\D";
-                        else                             return "\\d";
-                    }
-                },
-
-                new NodePattern() {
-                    @Override
-                    public String pattern(char c) {
-                        if(Pattern.matches("\\S", ""+c)) return "\\S";
-                        else                             return "\\s";
-                    }
-                },
-
-                new NodePattern() {
-                    @Override
-                    public String pattern(char c) {
-                        String notSet = "";
-                        for(int i=1; i <= Utils.randomInRange(MIN_NOT_SET,MAX_NOT_SET); i++)
-                            notSet += Utils.escape(Utils.randomCharNot(c));
-                        return "[^" + notSet + "]";
-                    }
-                },
-
-                new NodePattern() {
-                   @Override
-                   public String pattern(char c) {
-                       return Utils.escape(c);
-                   }
-               }
+                (PatternPrototype)(c) -> {
+                    String notSet = "";
+                    for(int i=1; i <= RussianRoulette.randomInRange(MIN_NOT_SET, MAX_NOT_SET); i++)
+                        notSet += PatternUtils.escape(CharUtils.randomCharExcept(c));
+                    return "[^" + notSet + "]";
+                }
         );
     }
 
-
-    private static final List<String> trapOptions = new ArrayList<String>();
-    static{
-        char randomChar = Utils.randomChar();
-
-        String notSet = "";
-        for(int i=1; i <= Utils.randomInRange(MIN_NOT_SET,MAX_NOT_SET); i++)
-            notSet += Utils.escape(Utils.randomChar());
-
-        Utils.addItemsToList(
-                trapOptions,
-
-                "\\W", "\\w","\\D","\\d", "\\S", "\\s", "[^" + notSet + "]",
-                "[" + Utils.escape(randomChar) + "-" + Utils.escape(Utils.randomCharAbove(randomChar)) + "]",
-                Utils.escape(randomChar)
-        );
+    /**
+     *
+     * @param charRange
+     * @param length
+     * @return
+     */
+    public static String randomString(CharRange charRange, int length){
+        CharUtils.setCharRange(charRange);
+        return CharUtils.randomString(length);
     }
 
+    /**
+     * Generates a random String representing a regular expression which matches the given String!
+     * @param string
+     * @return
+     */
+    public static String patternFromString(CharRange charRange, String string) {
+        CharUtils.setCharRange(charRange);
 
-    public static String patternFromString(String string) {
-
-        if(string == null || string.equals(""))
+        if(string == null || string.isEmpty())
             return string;
 
-        NodePatternList nodePatterns = new NodePatternList();
+        NodePatternList nodePatternList = new NodePatternList();
 
         for (char c : string.toCharArray()) {
-            String randomPattern = getRandomPattern(nodePatterns, c);
-
-            nodePatterns.add(randomPattern);
-            if(!Utils.isQuantifier(nodePatterns.last()) && Utils.luckyDay(15))
-                nodePatterns.add("?");
-
-            if(Utils.luckyDay(TRAP_CHANCE)) {
-                nodePatterns.add(getRandomTrap());
-
-                if(Utils.luckyDay(70))
-                    nodePatterns.add("?");
-                else
-                    nodePatterns.add("*");
+            if(!CharUtils.charIsInRange(c)){
+                throw new IllegalArgumentException("Character '" + c + "' is invalid for defined CharRanged " + CharUtils.getCharRange());
             }
 
+            nodePatternList.add(generateRandomPattern(nodePatternList, c));
         }
 
-
-        return nodePatterns.totalPattern();
+        return nodePatternList.toString();
     }
 
-    private static String getRandomNodePattern(char c){
-        return (Utils.randomItem(patternOptions)).pattern(c);
+    /**
+     *
+     * @param c
+     * @return
+     */
+    private static NodePattern getRandomNodePattern(char c){
+        NodePattern newPattern = new NodePattern(RussianRoulette.randomItem(patternOptions).pattern(c));
+
+        if(RussianRoulette.luckyDay(OPTIONAL_NODE_CHANCE))
+            newPattern.setOptionalQuantifier(RussianRoulette.randomItem(OptionalQuantifier.values()));
+
+        return newPattern;
     }
 
-    private static String getRandomTrap(){
-        return Utils.randomItem(trapOptions);
-        //case 6: return Utils.escape(c) + "?";
-    }
+    /**
+     * Produces a random NodePattern, taking advantage of patterns currently on {@param nodePatternList}.
+     * Returns null if the last pattern of the list (with the addition of a quantifier) can be used instead.
+     * @param nodePatternList
+     * @param c
+     * @return
+     */
+    private static NodePattern generateRandomPattern(NodePatternList nodePatternList, char c) {
+        if (c == '\0')
+            throw new IllegalArgumentException("Cannot generate random pattern from EOF \0");
 
-    private static String getRandomPattern(NodePatternList nodePatternList, char c) {
+        NodePattern lastPattern = nodePatternList.getLastPattern();
 
-        if (nodePatternList != null && !nodePatternList.isEmpty()) {
-            String lastPattern = nodePatternList.last();
+        if(lastPattern == null) //ie list is empty - base case
+            return getRandomNodePattern(c);
 
-            if (lastPattern.equals("*")) {
-                String beforeLast = nodePatternList.beforeLast(); //index out of bounds?
+        if (lastPattern.matches(c) && RussianRoulette.luckyDay(REPEATING_CHANCE)) { //quantify | repeat last pattern
 
-                if (Pattern.matches(beforeLast, "" + c) && Utils.luckyDay(70))
-                    return "";
-                else
-                    return getRandomNodePattern(c);
-
+            Quantifier lastQuantifier = lastPattern.getQuantifier();
+            if(lastQuantifier == null){
+                lastPattern.setQuantifier(Quantifier.generateQuantifier(RussianRoulette.randomItem(RepeatingQuantifier.values()))); //add quantifier
+                return null;
+            } else {
+                lastQuantifier.repeat();
             }
-            else if(lastPattern.equals("?")){
-                return getRandomNodePattern(c);
-            }
 
-            if (Pattern.matches(lastPattern, "" + c))
-                return "*"; //how about repeating more times!?!?!?!?! {3} also... + also... TODO
-
+            return null; //returning null means we are getting a ride with the last pattern. No need to add something new
         }
 
+        //if we cannot repeat (or we don't want to)
+        //introduce a new pattern to append
         return getRandomNodePattern(c);
     }
-
 }
+

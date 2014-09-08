@@ -1,60 +1,57 @@
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by gmtuk on 24/08/2014.
  */
-public class NodePatternList extends ArrayList<String> {
+class NodePatternList extends ArrayList<NodePattern> {
 
-    public String last(){
+    protected NodePatternList(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    protected NodePatternList() {
+    }
+
+    protected NodePatternList(Collection<? extends NodePattern> c) {
+        super(c);
+    }
+
+    /**
+     *
+     * @param nodePattern
+     * @return
+     */
+    @Override
+    public boolean add(NodePattern nodePattern) {
+        if(nodePattern == null)
+            return false;
+
+        return super.add(nodePattern);
+    }
+
+    /**
+     * Returns the last NodePattern of this list.
+     * @return
+     */
+    protected NodePattern getLastPattern(){
         if(isEmpty())
             return null;
 
         return get(size()-1);
     }
 
-    public boolean setLast(String p){
-        String prevLast = last();
-
-        set(size()-1, p);
-
-        return !prevLast.equals(last());
-    }
-
-    public String beforeLast(){
-        if(size() < 2)
-            return null;
-
-        return get(size()-2);
-    }
-
+    /**
+     *
+     * @return
+     */
     @Override
-    public boolean add(String s) {
-        if(s.equals(""))
-            return false;
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
 
-        String last = last();
+        for(NodePattern nodePattern : this)
+            stringBuilder.append(nodePattern.toString());
 
-        if(s.equals("?")){
-            if(last.equals("*"))
-                return false;
-            if(last.equals("+"))
-                return setLast("*");
-        }
-        else if(s.equals("*")){
-            if(last.equals("?"))
-                return setLast("*");
-        }
-
-        return super.add(s);
+        return stringBuilder.toString();
     }
-
-    public String totalPattern(){
-        String pattern = "";
-
-        for(String p : this)
-            pattern += p;
-
-        return pattern;
-    }
-
 }
