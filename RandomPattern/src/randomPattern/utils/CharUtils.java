@@ -1,43 +1,29 @@
+package randomPattern.utils;
+
 /**
  * Created by gmtuk on 23/08/2014.
  * @Author Arthur Ceccotti
  */
-enum CharRange {
-    ALL_PRINTABLE       (32,0xFFFF),
-    HUMAN_FRIENDLY      (48,122),
-    LATIN_PRINTABLE     (32,126),
-    UPPER_CASE          (65,90),
-    LOWER_CASE          (97,122),
-    DIGITS              (48,57);
-
-    final int MIN_CHAR, MAX_CHAR;
-
-    CharRange(int MIN_CHAR, int MAX_CHAR) {
-        this.MIN_CHAR = MIN_CHAR;
-        this.MAX_CHAR = MAX_CHAR;
-    }
-}
-
-abstract class CharUtils {
+public abstract class CharUtils {
 
     /**
      * Represents the current mode of this utils class. Defaulted to Mode.LATIN_PRINTABLE
      */
     private static CharRange charRange = CharRange.LATIN_PRINTABLE;
 
-    protected static CharRange getCharRange() {
+    public static CharRange getCharRange() {
         return charRange;
     }
-    protected static void setCharRange(CharRange charRange) {
+    public static void setCharRange(CharRange charRange) {
         CharUtils.charRange = charRange;
     }
 
     /**
-     * Returns true if the char is valid within the defined CharRange, false otherwise
+     * Returns true if the char is valid within the defined randomPattern.utils.CharRange, false otherwise
      * @param c
      * @return
      */
-    protected static boolean charIsInRange(char c){
+    public static boolean charIsInRange(char c){
         return c >= charRange.MIN_CHAR && c <= charRange.MAX_CHAR;
     }
 
@@ -45,8 +31,8 @@ abstract class CharUtils {
      * Returns a random char with ASCII value between mode.MIN_CHAR and mode.MAX_CHAR
      * @return
      */
-    protected static char randomChar(){
-        return (char)RussianRoulette.randomInRange(charRange.MIN_CHAR, charRange.MAX_CHAR);
+    public static char randomChar(){
+        return (char) RussianRoulette.randomInRange(charRange.MIN_CHAR, charRange.MAX_CHAR);
     }
 
     /**
@@ -54,7 +40,7 @@ abstract class CharUtils {
      * @param c
      * @return
      */
-    protected static char randomCharExcept(char c){
+    public static char randomCharExcept(char c){
         return (char)RussianRoulette.randomInRangeExcept(charRange.MIN_CHAR, charRange.MAX_CHAR, c);
     }
 
@@ -63,7 +49,7 @@ abstract class CharUtils {
      * @param c Minimum char.
      * @return
      */
-    protected static char randomCharAbove(char c){
+    public static char randomCharAbove(char c){
         return (char)RussianRoulette.randomInRange((int)c, charRange.MAX_CHAR);
     }
 
@@ -72,7 +58,7 @@ abstract class CharUtils {
      * @param c Minimum char.
      * @return
      */
-    protected static char randomCharBelow(char c){
+    public static char randomCharBelow(char c){
         return (char)RussianRoulette.randomInRange(charRange.MIN_CHAR, (int)c);
     }
 
@@ -98,7 +84,7 @@ abstract class CharUtils {
      * @param c
      * @return
      */
-    protected static char toOtherCase(char c){
+    public static char toOtherCase(char c){
         if(Character.isAlphabetic(c)) {
             if (Character.isLowerCase(c))
                 return Character.toUpperCase(c);
@@ -115,7 +101,7 @@ abstract class CharUtils {
      * @param offset
      * @return
      */
-    protected static char neighbour(char c, int offset){
+    public static char neighbour(char c, int offset){
         c += offset;
 
         if(c < charRange.MIN_CHAR)
@@ -134,7 +120,7 @@ abstract class CharUtils {
      * @param maxOffset
      * @return
      */
-    protected static char randomNeighbour(char c, int minOffset, int maxOffset){
+    public static char randomNeighbour(char c, int minOffset, int maxOffset){
         return CharUtils.neighbour(c, RussianRoulette.randomInRange(minOffset, maxOffset));
     }
 }

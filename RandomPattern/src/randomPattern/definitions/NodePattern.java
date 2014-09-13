@@ -1,21 +1,29 @@
+package randomPattern.definitions;
+
+import randomPattern.definitions.quantifier.OptionalQuantifierType;
+import randomPattern.definitions.quantifier.Quantifier;
+import randomPattern.definitions.quantifier.QuantifierGenerator;
+import randomPattern.definitions.quantifier.RepeatingQuantifierType;
+
 import java.util.regex.Pattern;
 
 /**
  * Created by gmtuk on 01/09/2014.
  */
-class NodePattern {
+public class NodePattern {
     private final String pattern;
     private Quantifier quantifier = null;
-    private OptionalQuantifier optionalQuantifier = null;
+    private OptionalQuantifierType optionalQuantifier = null;
 
-    protected NodePattern(String pattern) {
+    public NodePattern(String pattern) {
         this.pattern = pattern;
     }
 
-    protected Quantifier getQuantifier() {
+    public Quantifier getQuantifier() {
         return quantifier;
     }
-    protected void setQuantifier(Quantifier quantifier) {
+
+    public void setQuantifier(Quantifier quantifier) {
         this.quantifier = quantifier;
     }
 
@@ -23,10 +31,10 @@ class NodePattern {
         return optionalQuantifier != null;
     }
 
-    protected void setOptionalQuantifier(OptionalQuantifier optionalQuantifier) {
-        if(optionalQuantifier == OptionalQuantifier.STAR && quantifier == null){
+    public void setOptionalQuantifier(OptionalQuantifierType optionalQuantifier) {
+        if(optionalQuantifier == OptionalQuantifierType.STAR && quantifier == null){
             //if there are no repeating quantifiers yet, we can set one for *
-            this.quantifier = Quantifier.generateQuantifier(RepeatingQuantifier.STAR);
+            this.quantifier = QuantifierGenerator.generate(RepeatingQuantifierType.STAR);
         } else {
             this.optionalQuantifier = optionalQuantifier;
         }
@@ -36,7 +44,7 @@ class NodePattern {
         return pattern;
     }
 
-    protected boolean matches(char c){
+    public boolean matches(char c){
         return Pattern.matches(pattern, "" + c);
     }
 

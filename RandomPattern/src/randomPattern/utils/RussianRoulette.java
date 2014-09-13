@@ -1,3 +1,5 @@
+package randomPattern.utils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -5,7 +7,7 @@ import java.util.Random;
 /**
  * Created by gmtuk on 30/08/2014.
  */
-class RussianRoulette {
+public class RussianRoulette {
     private static final Random random = new Random();
 
     /**
@@ -14,7 +16,7 @@ class RussianRoulette {
      * @param max
      * @return
      */
-    protected static int randomInRange(int min, int max) {
+    public static int randomInRange(int min, int max) {
         if(min > max)
             throw new IllegalArgumentException("Cannot generate random number from range where min > max.");
 
@@ -60,7 +62,7 @@ class RussianRoulette {
      * {@param successPercentage} The % chance of returning true.
      * @return
      */
-    protected static boolean luckyDay(int successPercentage){
+    public static boolean luckyDay(int successPercentage){
         return successPercentage >= randomInRange(1, 100);
     }
 
@@ -70,7 +72,7 @@ class RussianRoulette {
      * @param <T> Type of item
      * @return
      */
-    protected static <T> T randomItem(List<T> list){
+    public static <T> T randomItem(List<T> list){
         if(list == null || list.size() == 0)
             return null;
 
@@ -82,7 +84,7 @@ class RussianRoulette {
      * @param array Array of items
      * @return
      */
-    protected static <T> T randomItem(T[] array){
+    public static <T> T randomItem(T[] array){
         return randomItem(Arrays.asList(array));
     }
 }

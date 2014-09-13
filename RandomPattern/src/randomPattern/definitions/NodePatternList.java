@@ -1,19 +1,21 @@
+package randomPattern.definitions;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Created by gmtuk on 24/08/2014.
  */
-class NodePatternList extends ArrayList<NodePattern> {
+public class NodePatternList extends ArrayList<NodePattern> {
 
     protected NodePatternList(int initialCapacity) {
         super(initialCapacity);
     }
 
-    protected NodePatternList() {
+    public NodePatternList() {
     }
 
-    protected NodePatternList(Collection<? extends NodePattern> c) {
+    public NodePatternList(Collection<? extends NodePattern> c) {
         super(c);
     }
 
@@ -31,10 +33,10 @@ class NodePatternList extends ArrayList<NodePattern> {
     }
 
     /**
-     * Returns the last NodePattern of this list.
+     * Returns the last randomPattern.definitions.NodePattern of this list.
      * @return
      */
-    protected NodePattern getLastPattern(){
+    public NodePattern getLastPattern(){
         if(isEmpty())
             return null;
 

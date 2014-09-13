@@ -1,9 +1,11 @@
+package randomPattern.utils;
+
 import java.util.Collection;
 
 /**
  * Created by gmtuk on 31/08/2014.
  */
-abstract class Utilities {
+public abstract class Utilities {
     /**
      *
      * @param collection
