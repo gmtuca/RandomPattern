@@ -7,13 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70d4ac29-7596-4994-9ca4-e58509a0c057" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/CharUtils.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/CharUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/PatternGenerator.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/PatternGenerator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/definitions/quantifier/Quantifier.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/definitions/quantifier/Quantifier.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/definitions/quantifier/QuantifierGenerator.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/definitions/quantifier/QuantifierGenerator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/RussianRoulette.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/RussianRoulette.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/test/UnitTests.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/test/UnitTests.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/Utilities.java" afterPath="$PROJECT_DIR$/RandomPattern/src/randomPattern/utils/Utilities.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Rex.iws" />
@@ -681,7 +674,11 @@
       <created>1410608823372</created>
       <updated>1410608823372</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="-Added randomization for Quantifier types: BETWEEN (DoubleBounded) and AT_LEAST (SingleBounded)&#10;-Updated JUnit tests">
+      <created>1410718221080</created>
+      <updated>1410718221080</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -732,7 +729,8 @@
     <MESSAGE value="sexy lambda expressions!" />
     <MESSAGE value="Looking great! full of enums and other things.&#10;Quantifiers working well!&#10;" />
     <MESSAGE value="Overall refactor.&#10;Added packages and improved cohesion.&#10;Deleted empty Main.java and  Utils.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Overall refactor.&#10;Added packages and improved cohesion.&#10;Deleted empty Main.java and  Utils.java" />
+    <MESSAGE value="-Added randomization for Quantifier types: BETWEEN (DoubleBounded) and AT_LEAST (SingleBounded)&#10;-Updated JUnit tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="-Added randomization for Quantifier types: BETWEEN (DoubleBounded) and AT_LEAST (SingleBounded)&#10;-Updated JUnit tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
