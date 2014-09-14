@@ -104,12 +104,7 @@ public abstract class CharUtils {
     public static char neighbour(char c, int offset){
         c += offset;
 
-        if(c < charRange.MIN_CHAR)
-            return (char) charRange.MIN_CHAR;
-        if(c > charRange.MAX_CHAR)
-            return (char) charRange.MAX_CHAR;
-
-        return c;
+        return (char) Utilities.saturate(c, charRange.MIN_CHAR, charRange.MAX_CHAR);
     }
 
     /**
@@ -121,6 +116,6 @@ public abstract class CharUtils {
      * @return
      */
     public static char randomNeighbour(char c, int minOffset, int maxOffset){
-        return CharUtils.neighbour(c, RussianRoulette.randomInRange(minOffset, maxOffset));
+        return (char)RussianRoulette.randomNear(c, minOffset, maxOffset, charRange.MIN_CHAR, charRange.MAX_CHAR);
     }
 }

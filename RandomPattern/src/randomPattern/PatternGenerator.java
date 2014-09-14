@@ -28,7 +28,6 @@ public abstract class PatternGenerator {
 
         - introduce brackets ()
         - OR and AND: pattern1 | pattern2, pattern1 && pattern 2
-        - randomize bounded quantifiers
      */
 
 
@@ -47,10 +46,15 @@ public abstract class PatternGenerator {
 
         for (char c : string.toCharArray()) {
             if(!CharUtils.charIsInRange(c)){
-                throw new IllegalArgumentException("Character '" + c + "' is invalid for defined CharRanged " + CharUtils.getCharRange());
+                throw new IllegalArgumentException("Character '" + c + "' is invalid for defined " + CharRange.class.getSimpleName() + " " + CharUtils.getCharRange());
             }
 
             nodePatternList.add(generateRandomPattern(nodePatternList, c));
+        }
+
+
+        for(NodePattern nodePattern : nodePatternList){
+            QuantifierGenerator.randomizeRepeatingQuantifier(nodePattern.getQuantifier());
         }
 
         return nodePatternList.toString();

@@ -87,4 +87,35 @@ public class RussianRoulette {
     public static <T> T randomItem(T[] array){
         return randomItem(Arrays.asList(array));
     }
+
+    /**
+     *
+     * @param n
+     * @param minOffset
+     * @param maxOffset
+     * @param saturateDown
+     * @param saturateUp
+     * @return
+     */
+    public static int randomNear(int n, int minOffset, int maxOffset, int saturateDown, int saturateUp){
+        if(saturateDown > saturateUp)
+            throw new IllegalArgumentException("saturateDown must be greater than saturateUp");
+
+        n += RussianRoulette.randomInRange(minOffset, maxOffset);
+
+        return Utilities.saturate(n, saturateDown, saturateUp);
+    }
+
+    /**
+     *
+     * @param n
+     * @param minOffset
+     * @param maxOffset
+     * @return
+     */
+    public static int randomNear(int n, int minOffset, int maxOffset){
+        n += RussianRoulette.randomInRange(minOffset, maxOffset);
+
+        return Utilities.saturate(n);
+    }
 }

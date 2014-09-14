@@ -20,4 +20,29 @@ public abstract class Utilities {
             if(t != null)
                 collection.add(t);
     }
+
+    /**
+     *
+     * @param i
+     * @param min
+     * @param max
+     * @return
+     */
+    public static int saturate(int i, int min, int max){
+        if(i < min)
+            return min;
+        if(i > max)
+            return max;
+
+        return i;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static int saturate(int i){
+        return (i < 0) ? 0 : i;
+    }
+
 }

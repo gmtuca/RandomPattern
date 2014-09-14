@@ -9,17 +9,29 @@ package randomPattern.definitions.quantifier;
     X*  	X, zero or more times
     X+	    X, one or more times
  */
-public interface Quantifier{
+public abstract class Quantifier {
+
     public abstract void repeat();
     public abstract String toString();
+
+    private RepeatingQuantifierType type;
+
+    protected Quantifier(RepeatingQuantifierType type) {
+        this.type = type;
+    }
+
+    public final RepeatingQuantifierType getType() {
+        return type;
+    }
 }
 
-class UnboundedQuantifier implements Quantifier{
+
+class UnboundedQuantifier extends Quantifier{
     private RepeatingQuantifierType type;
     private char c;
 
     UnboundedQuantifier(RepeatingQuantifierType type) {
-        this.type = type;
+        super(type);
 
         switch (type){
            case PLUS:       this.c = '+'; break;
@@ -44,12 +56,11 @@ class UnboundedQuantifier implements Quantifier{
     X{n}	X, exactly n times
     X{n,}	X, at least n times
  */
-class SingleBoundedQuantifier implements Quantifier{
-    private RepeatingQuantifierType type;
+class SingleBoundedQuantifier extends Quantifier{
     private int n;
 
     SingleBoundedQuantifier(RepeatingQuantifierType type) {
-        this.type = type;
+        super(type);
 
         switch (type){
             case EXACTLY:
@@ -70,9 +81,14 @@ class SingleBoundedQuantifier implements Quantifier{
         return n;
     }
 
+    protected void setN(int n){
+        this.n = n;
+    }
+
+
     @Override
     public String toString() {
-        switch (type){
+        switch (getType()){
             case EXACTLY:   return "{" + n + "}";
             case AT_LEAST:  return "{" + n + ",}";
             default:        return null;
@@ -83,18 +99,21 @@ class SingleBoundedQuantifier implements Quantifier{
 /*
     X{n,m}	X, at least n but not more than m times
  */
-class DoubleBoundedQuantifier implements Quantifier{
-    private int n = 2, m = 3;
+class DoubleBoundedQuantifier extends Quantifier{
+    private int n = 2, m = 2;
 
     DoubleBoundedQuantifier() {
+        super(RepeatingQuantifierType.BETWEEN);
     }
 
     DoubleBoundedQuantifier(int n, int m){
+        this();
         set(n,m);
     }
 
     @Override
     public void repeat() {
+        n++;
         m++;
     }
 
