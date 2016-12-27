@@ -14,14 +14,16 @@ import java.util.regex.Pattern;
  */
 public class UnitTests {
 
+    /*
     public static void main(String[] args){
 
         String string = "Hello World!";
-        String pattern = PatternGenerator.randomPatternFromString(CharRange.LATIN_PRINTABLE, string);
+        String pattern = PatternGenerator.randomPattern(CharRange.LATIN_PRINTABLE, string);
         System.out.println(pattern);
 
         Assert.assertTrue(Pattern.matches(pattern, string));
     }
+    */
 
     @Test
     public void testEmpty(){
@@ -48,7 +50,7 @@ public class UnitTests {
 
         for(int i = 0; i < NUMBER_OF_WORDS; i++) {
             for (CharRange[] pair : invalidPairs) {
-                String string = PatternGenerator.randomString(pair[0], STRING_LENGTH);
+                String string = CharUtils.randomString(pair[0], STRING_LENGTH);
 
                 try {
                     regexAssertRandomPattern(pair[1], string, TESTS_PER_WORD);
@@ -68,7 +70,7 @@ public class UnitTests {
         final int NUMBER_OF_CHARS = 1000;
 
         for (int i = 0; i < NUMBER_OF_CHARS; i++)
-            regexAssertRandomPattern(CharRange.LATIN_PRINTABLE, "" + CharUtils.randomChar(), 100);
+            regexAssertRandomPattern(CharRange.LATIN_PRINTABLE, "" + CharUtils.randomChar(CharRange.LATIN_PRINTABLE), 100);
     }
 
     @Test
@@ -90,7 +92,7 @@ public class UnitTests {
         final int TESTS_PER_WORD = 150;
 
         for (int i = 0; i < NUMBER_OF_WORDS; i++) {
-            String word = PatternGenerator.randomString(charRange, RussianRoulette.randomInRange(MIN_WORD_LENGTH, MAX_WORD_LENGTH));
+            String word = CharUtils.randomString(charRange, RussianRoulette.randomInRange(MIN_WORD_LENGTH, MAX_WORD_LENGTH));
 
             regexAssertRandomPattern(charRange, word, TESTS_PER_WORD);
         }
@@ -98,7 +100,7 @@ public class UnitTests {
 
     private void regexAssertRandomPattern(CharRange charRange, String string, int tests_per_word){
         for (int i = 0; i < tests_per_word; i++) {
-            String pattern = PatternGenerator.randomPatternFromString(charRange, string);
+            String pattern = PatternGenerator.randomPattern(charRange, string);
             System.out.println(pattern);
 
             Assert.assertTrue(Pattern.matches(pattern, string));

@@ -23,11 +23,16 @@ public abstract class PatternUtils {
      * @param c
      * @return
      */
-    public static String escape(char c){
-        if(escapeSet.contains(c))
-            return "\\"+c;
-        else
-            return ""+c;
+    public static String escaping(char c){
+        return escapeSet.contains(c) ? "\\"+c : ""+c;
+    }
+
+    public static String fromToPattern(char a, char b){
+        return "[" + escaping(a) + "-" + escaping(b) + "]";
+    }
+
+    public static String notPattern(String s){
+        return "[^" + s + "]";
     }
 
 }

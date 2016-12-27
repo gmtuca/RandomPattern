@@ -11,6 +11,7 @@ import randomPattern.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public abstract class PatternGenerator {
 
@@ -31,13 +32,24 @@ public abstract class PatternGenerator {
      */
 
 
+    public static void main(String[] args){
+
+        stream(CharRange.LATIN_PRINTABLE, "Hello World!")
+                .peek((s)->{try{Thread.sleep(500);}catch(InterruptedException e){}})
+                .limit(50)
+                .forEach(System.out::println);
+    }
+
+    public static Stream<String> stream(CharRange charRange, String string){
+        return Stream.iterate(randomPattern(charRange, string), (s)-> randomPattern(charRange, string));
+    }
+
     /**
      * Generates a random String representing a regular expression which matches the given String!
      * @param string
      * @return
      */
-    public static String randomPatternFromString(CharRange charRange, String string) {
-        CharUtils.setCharRange(charRange);
+    public static String randomPattern(CharRange charRange, String string) {
 
         if(string == null || string.isEmpty())
             return string;
@@ -45,11 +57,13 @@ public abstract class PatternGenerator {
         NodePatternList nodePatternList = new NodePatternList();
 
         for (char c : string.toCharArray()) {
-            if(!CharUtils.charIsInRange(c)){
-                throw new IllegalArgumentException("Character '" + c + "' is invalid for defined " + CharRange.class.getSimpleName() + " " + CharUtils.getCharRange());
+            if(!charRange.inRange(c)){
+                throw new IllegalArgumentException(
+                        "Character '" + c + "' is invalid for defined "
+                                + CharRange.class.getSimpleName());
             }
 
-            nodePatternList.add(generateRandomPattern(nodePatternList, c));
+            nodePatternList.add(generateRandomPattern(charRange, nodePatternList, c));
         }
 
 
@@ -60,19 +74,8 @@ public abstract class PatternGenerator {
         return nodePatternList.toString();
     }
 
-    /**
-     *
-     * @param charRange
-     * @param length
-     * @return
-     */
-    public static String randomString(CharRange charRange, int length){
-        CharUtils.setCharRange(charRange);
-        return CharUtils.randomString(length);
-    }
-
     interface PatternPrototype {
-        public String pattern(char c);
+        String pattern(CharRange r, char c);
     }
 
     private static final List<PatternPrototype> patternOptions = new ArrayList<>();
@@ -80,27 +83,19 @@ public abstract class PatternGenerator {
         Utilities.addItemsToCollection(
                 patternOptions,
 
-                (PatternPrototype) (c) -> {
-                    return PatternUtils.escape(c);
-                },
-                (PatternPrototype) (c) -> {
-                    return Pattern.matches("\\W", "" + c) ? "\\W" : "\\w";
-                },
-                (PatternPrototype) (c) -> {
-                    return Pattern.matches("\\D", "" + c) ? "\\D" : "\\d";
-                },
-                (PatternPrototype) (c) -> {
-                    return Pattern.matches("\\S", "" + c) ? "\\S" : "\\s";
-                },
-                (PatternPrototype) (c) -> {
-                    return "[" + PatternUtils.escape(CharUtils.randomNeighbour(c, -MAX_NEIGHBOUR_RANGE, -MIN_NEIGHBOUR_RANGE))
-                            + "-" + PatternUtils.escape(CharUtils.randomNeighbour(c, MIN_NEIGHBOUR_RANGE, MAX_NEIGHBOUR_RANGE)) + "]";
-                },
-                (PatternPrototype) (c) -> {
+                (r, c) -> PatternUtils.escaping(c),
+                (r, c) -> Pattern.matches("\\W", "" + c) ? "\\W" : "\\w",
+                (r, c) -> Pattern.matches("\\D", "" + c) ? "\\D" : "\\d",
+                (r, c) -> Pattern.matches("\\S", "" + c) ? "\\S" : "\\s",
+                (r, c) -> PatternUtils.fromToPattern(
+                        CharUtils.randomNeighbour(r, c, -MAX_NEIGHBOUR_RANGE, -MIN_NEIGHBOUR_RANGE),
+                        CharUtils.randomNeighbour(r, c, MIN_NEIGHBOUR_RANGE, MAX_NEIGHBOUR_RANGE)
+                ),
+                (r, c) -> {
                     String notSet = "";
                     for (int i = 1; i <= RussianRoulette.randomInRange(MIN_NOT_SET, MAX_NOT_SET); i++)
-                        notSet += PatternUtils.escape(CharUtils.randomCharExcept(c));
-                    return "[^" + notSet + "]";
+                        notSet += PatternUtils.escaping(CharUtils.randomCharExcept(r,c));
+                    return PatternUtils.notPattern(notSet);
                 }
         );
     }
@@ -110,8 +105,8 @@ public abstract class PatternGenerator {
      * @param c
      * @return
      */
-    private static NodePattern getRandomNodePattern(char c){
-        NodePattern newPattern = new NodePattern(RussianRoulette.randomItem(patternOptions).pattern(c));
+    private static NodePattern getRandomNodePattern(CharRange r, char c){
+        NodePattern newPattern = new NodePattern(RussianRoulette.randomItem(patternOptions).pattern(r,c));
 
         if(RussianRoulette.luckyDay(OPTIONAL_NODE_CHANCE))
             newPattern.setOptionalQuantifier(RussianRoulette.randomItem(OptionalQuantifierType.values()));
@@ -126,14 +121,14 @@ public abstract class PatternGenerator {
      * @param c
      * @return
      */
-    private static NodePattern generateRandomPattern(NodePatternList nodePatternList, char c) {
+    private static NodePattern generateRandomPattern(CharRange r, NodePatternList nodePatternList, char c) {
         if (c == '\0')
             throw new IllegalArgumentException("Cannot generate random pattern from EOF \0");
 
         NodePattern lastPattern = nodePatternList.getLastPattern();
 
         if(lastPattern == null) //ie list is empty - base case
-            return getRandomNodePattern(c);
+            return getRandomNodePattern(r,c);
 
         if (lastPattern.matches(c) && RussianRoulette.luckyDay(REPEATING_CHANCE)) { //quantify | repeat last pattern
 
@@ -150,7 +145,7 @@ public abstract class PatternGenerator {
 
         //if we cannot repeat (or we don't want to)
         //introduce a new pattern to append
-        return getRandomNodePattern(c);
+        return getRandomNodePattern(r,c);
     }
 }
 
