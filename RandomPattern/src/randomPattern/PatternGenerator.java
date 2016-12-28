@@ -9,13 +9,14 @@ import randomPattern.definitions.quantifier.RepeatingQuantifierType;
 import randomPattern.utils.*;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public abstract class PatternGenerator {
 
-    private static final int REPEATING_CHANCE        = 70,
+    private static final int REPEATING_CHANCE        = 55,
                              OPTIONAL_NODE_CHANCE    = 10,
 
                              MIN_NOT_SET             = 1,
@@ -24,24 +25,43 @@ public abstract class PatternGenerator {
                              MIN_NEIGHBOUR_RANGE     = 1,
                              MAX_NEIGHBOUR_RANGE     = 10;
 
-    /*
-        For next version:
-
-        - introduce brackets ()
-        - OR and AND: pattern1 | pattern2, pattern1 && pattern 2
-     */
-
-
     public static void main(String[] args){
+        System.out.println(benchmark());
 
-        stream(CharRange.LATIN_PRINTABLE, "Hello World!")
-                .peek((s)->{try{Thread.sleep(500);}catch(InterruptedException e){}})
+        /*
+        stream(CharRange.ASCII_PRINTABLE, "Hello World!")
                 .limit(50)
                 .forEach(System.out::println);
+        */
+    }
+
+    private static Hashtable<Integer, Double> benchmark(){
+        Hashtable<Integer, Double> b = new Hashtable<>();
+
+        for(int i=0; i<16; i++){
+            int len = 2 << i; //2^i
+            String randomString = CharUtils.randomString(CharRange.ASCII_PRINTABLE, len);
+
+            long s = System.nanoTime();
+
+            for(int a = 0; a < 10000; a++){
+                randomPattern(CharRange.ASCII_PRINTABLE, randomString);
+            }
+
+            long f = System.nanoTime();
+
+            double diff = ((f - s) / 1000000.0) / 10000; //time per item
+
+            System.out.println(len + "," + diff);
+
+            b.put(len, diff);
+        }
+
+        return b;
     }
 
     public static Stream<String> stream(CharRange charRange, String string){
-        return Stream.iterate(randomPattern(charRange, string), (s)-> randomPattern(charRange, string));
+        return Stream.generate(()-> randomPattern(charRange, string));
     }
 
     /**
@@ -80,17 +100,27 @@ public abstract class PatternGenerator {
 
     private static final List<PatternPrototype> patternOptions = new ArrayList<>();
     static{
+        PatternPrototype fromTo = (r, c) -> PatternUtils.fromToPattern(
+                CharUtils.randomNeighbour(r, c, -MAX_NEIGHBOUR_RANGE, -MIN_NEIGHBOUR_RANGE),
+                CharUtils.randomNeighbour(r, c, MIN_NEIGHBOUR_RANGE, MAX_NEIGHBOUR_RANGE)
+        );
+
         Utilities.addItemsToCollection(
                 patternOptions,
 
                 (r, c) -> PatternUtils.escaping(c),
+                (r, c) -> PatternUtils.escaping(c),
+
+                fromTo,
+                fromTo,
+
+                PatternUtils::lowerUpperOrNumber,
+                PatternUtils::lowerUpperOrNumber,
+
                 (r, c) -> Pattern.matches("\\W", "" + c) ? "\\W" : "\\w",
                 (r, c) -> Pattern.matches("\\D", "" + c) ? "\\D" : "\\d",
                 (r, c) -> Pattern.matches("\\S", "" + c) ? "\\S" : "\\s",
-                (r, c) -> PatternUtils.fromToPattern(
-                        CharUtils.randomNeighbour(r, c, -MAX_NEIGHBOUR_RANGE, -MIN_NEIGHBOUR_RANGE),
-                        CharUtils.randomNeighbour(r, c, MIN_NEIGHBOUR_RANGE, MAX_NEIGHBOUR_RANGE)
-                ),
+
                 (r, c) -> {
                     String notSet = "";
                     for (int i = 1; i <= RussianRoulette.randomInRange(MIN_NOT_SET, MAX_NOT_SET); i++)

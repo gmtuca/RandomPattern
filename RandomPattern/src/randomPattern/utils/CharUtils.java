@@ -28,8 +28,8 @@ public abstract class CharUtils {
      * @param c Minimum char.
      * @return
      */
-    public static char randomCharAbove(CharRange r, char c){
-        return (char)RussianRoulette.randomInRange((int)c, r.MAX_CHAR);
+    public static char randomCharAbove(char c, int maxOffset){
+        return (char)RussianRoulette.randomInRange((int)c, (int)c + maxOffset);
     }
 
     /**
@@ -37,8 +37,8 @@ public abstract class CharUtils {
      * @param c Minimum char.
      * @return
      */
-    public static char randomCharBelow(CharRange r, char c){
-        return (char)RussianRoulette.randomInRange(r.MIN_CHAR, (int)c);
+    public static char randomCharBelow(char c, int maxOffset){
+        return randomCharAbove(c, -maxOffset);
     }
 
     /**

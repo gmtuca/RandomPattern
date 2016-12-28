@@ -1,7 +1,17 @@
 RandomPattern
 =============
 
-Library to generate a random pattern from a given String and character range.
+Library to generate a random pattern from which a given String is guaranteed to match.
+
+Example:
+
+```"Hello World!"```
+
+may produce:
+
+```H[c-f]l{1,2}\w\sWo[^ras2]l*d```
+
+
 
 Usage:
 ```

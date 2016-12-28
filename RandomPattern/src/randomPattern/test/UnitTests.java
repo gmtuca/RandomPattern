@@ -14,20 +14,9 @@ import java.util.regex.Pattern;
  */
 public class UnitTests {
 
-    /*
-    public static void main(String[] args){
-
-        String string = "Hello World!";
-        String pattern = PatternGenerator.randomPattern(CharRange.LATIN_PRINTABLE, string);
-        System.out.println(pattern);
-
-        Assert.assertTrue(Pattern.matches(pattern, string));
-    }
-    */
-
     @Test
     public void testEmpty(){
-        regexAssertRandomPattern(CharRange.LATIN_PRINTABLE, "", 1);
+        regexAssertRandomPattern(CharRange.ASCII_PRINTABLE, "", 1);
     }
 
     @Test
@@ -70,13 +59,13 @@ public class UnitTests {
         final int NUMBER_OF_CHARS = 1000;
 
         for (int i = 0; i < NUMBER_OF_CHARS; i++)
-            regexAssertRandomPattern(CharRange.LATIN_PRINTABLE, "" + CharUtils.randomChar(CharRange.LATIN_PRINTABLE), 100);
+            regexAssertRandomPattern(CharRange.ASCII_PRINTABLE,
+                            "" + CharUtils.randomChar(CharRange.ASCII_PRINTABLE), 100);
     }
 
     @Test
     public void testWords(){
-        testWords(CharRange.HUMAN_FRIENDLY);
-        testWords(CharRange.LATIN_PRINTABLE);
+        testWords(CharRange.ASCII_PRINTABLE);
         testWords(CharRange.UPPER_CASE);
         testWords(CharRange.LOWER_CASE);
         testWords(CharRange.DIGITS);

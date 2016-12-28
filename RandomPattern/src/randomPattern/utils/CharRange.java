@@ -5,8 +5,7 @@ package randomPattern.utils;
  */
 public enum CharRange {
     ALL_PRINTABLE       (32,0xFFFF),
-    HUMAN_FRIENDLY      (48,122),
-    LATIN_PRINTABLE     (32,126),
+    ASCII_PRINTABLE     (32,126),
     UPPER_CASE          ('A','Z'),
     LOWER_CASE          ('a','z'),
     DIGITS              ('0','9');

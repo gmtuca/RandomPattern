@@ -1,7 +1,5 @@
 package randomPattern.utils;
 
-import randomPattern.utils.Utilities;
-
 import java.util.*;
 
 /**
@@ -25,6 +23,27 @@ public abstract class PatternUtils {
      */
     public static String escaping(char c){
         return escapeSet.contains(c) ? "\\"+c : ""+c;
+    }
+
+    public static String lowerUpperOrNumber(CharRange r, char c) {
+        switch (r){
+            case LOWER_CASE: return fromToPattern('a','z');
+            case UPPER_CASE: return fromToPattern('A','Z');
+            case DIGITS:     return fromToPattern('0','9');
+            default:
+                if(Character.isUpperCase(c)){
+                    return fromToPattern('A','Z');
+                }
+                else if(Character.isLowerCase(c)){
+                    return fromToPattern('a','z');
+                }
+                else if(Character.isDigit(c)){
+                    return fromToPattern('0','9');
+                }
+                else {
+                    return escaping(c);
+                }
+        }
     }
 
     public static String fromToPattern(char a, char b){
