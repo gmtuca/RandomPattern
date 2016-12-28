@@ -28,6 +28,7 @@ Stream<String> patternStream = PatternGenerator.stream(CharRange charRange, Stri
 ```
 
 #Benchmark
+Results from running program against variable input lengths 10,000 times to gather average performance. Performed single threaded on ASUS X555LD, Ubuntu 16.04.
 <img src='https://raw.github.com/gmtuca/RandomPattern/master/images/benchmark_small.png' width='600px'> <br />
 Additional benchmarking can be found on the images folder.
 
