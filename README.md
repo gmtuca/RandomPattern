@@ -11,9 +11,7 @@ may produce:
 
 ```H[c-f]l{1,2}\w\sWo[^ras2]l*d```
 
-
-
-Usage:
+#Usage:
 ```
 String PatternGenerator.random(CharRange charRange, String string);
 ```
@@ -21,7 +19,14 @@ or using an infinite Stream:
 ```
 Stream<String> PatternGenerator.stream(CharRange charRange, String string);
 ```
-Here is an example of 100 elements of such stream given the input CharRange.LATIN_PRINTABLE, "Hello World!"
+
+#Benchmark
+<img src='https://raw.github.com/gmtuca/RandomPattern/master/images/benchmark_small.png' width='600px'> <br />
+<img src='https://raw.github.com/gmtuca/RandomPattern/master/images/benchmark_large.png' width='600px'> <br />
+
+#Samples
+
+Here are examples of 100 elements of the stream given the input CharRange.LATIN_PRINTABLE, "Hello World!"
 
 ```
 \D+\w{2,6}\s\D{1,2}[h-x]+[\[-k]\D
